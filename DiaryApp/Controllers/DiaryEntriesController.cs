@@ -11,15 +11,18 @@ namespace DiaryApp.Controllers
         {
             _db = db;
         }
+
         public IActionResult Index()
         {
             List<DiaryEntry> objDiaryEntryList = _db.DiaryEntries.ToList();
             return View(objDiaryEntryList);
         }
+
         public IActionResult Create()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Create(DiaryEntry obj)
         {
@@ -28,10 +31,10 @@ namespace DiaryApp.Controllers
                 ModelState.AddModelError("Title", "Title too short");
             }
 
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
-                _db.DiaryEntries.Add(obj);//Adds diary entry to db
-                _db.SaveChanges();//Saves the changes 
+                _db.DiaryEntries.Add(obj); // Adds diary entry to db
+                _db.SaveChanges();        // Saves the changes
                 return RedirectToAction("Index");
             }
 
@@ -41,22 +44,23 @@ namespace DiaryApp.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            if (id == null || id == 0) 
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
 
-
+            // Retrieve the diary entry from the database
             DiaryEntry? diaryEntry = _db.DiaryEntries.Find(id);
 
-            if (diaryEntry == null) 
+            if (diaryEntry == null)
             {
                 return NotFound();
             }
 
-            return View();
-
+            // Pass the diary entry to the view
+            return View(diaryEntry);
         }
+
         [HttpPost]
         public IActionResult Edit(DiaryEntry obj)
         {
@@ -67,13 +71,40 @@ namespace DiaryApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _db.DiaryEntries.Update(obj);//Update the diary entry
-                _db.SaveChanges();//Saves the changes 
+                _db.DiaryEntries.Update(obj); // Update the diary entry
+                _db.SaveChanges();           // Saves the changes
                 return RedirectToAction("Index");
             }
 
             return View(obj);
         }
 
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            // Retrieve the diary entry from the database
+            DiaryEntry? diaryEntry = _db.DiaryEntries.Find(id);
+
+            if (diaryEntry == null)
+            {
+                return NotFound();
+            }
+
+            // Pass the diary entry to the view
+            return View(diaryEntry);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(DiaryEntry obj)
+        {
+            _db.DiaryEntries.Remove(obj); // Remove the diary entry from db
+            _db.SaveChanges();           // Saves the changes
+            return RedirectToAction("Index");
+        }
     }
 }
